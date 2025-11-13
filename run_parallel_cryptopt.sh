@@ -5,7 +5,7 @@
 # Configuration - Edit these for your experiment
 CC="clang"
 runArgs="--bridge fiat --curve curve25519 --method mul --evals 200k --bets 20 --betRatio 0.1 --fair-comparison --resultDir ~/CryptOpt/results/fiar-comp"
-cpumasklist="1 2 3"  # Paper uses 3 parallel runs (leaving core 0 for OS)
+cpumasklist="2 4 6"  # Use allowed CPUs (avoiding blocked odd-numbered cores)
 wd="${1:-$HOME/CryptOpt}"  # CryptOpt directory (pass as argument or use ~/CryptOpt)
 SESSION_NAME="cryptopt"
 
