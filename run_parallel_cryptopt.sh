@@ -32,7 +32,7 @@ IFS=' ' read -ra masks <<<"${cpumasklist}"
 for mask in "${masks[@]}"; do
   tmux split-window -t "$SESSION_NAME:0" -v
   # if using split-pane ./CryptOpt ..., the pane closes once the command finished.
-  tmux send-keys -t "$SESSION_NAME:0" "CC=${CC} taskset ${mask} ${wd}/CryptOpt ${runArgs} --seed $(date +%N) " C-m
+  tmux send-keys -t "$SESSION_NAME:0" "CC=${CC} taskset -c ${mask} ${wd}/CryptOpt ${runArgs} --seed $(date +%N) " C-m
   tmux select-layout -t "$SESSION_NAME:0" even-vertical
 done
 
