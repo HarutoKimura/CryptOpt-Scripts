@@ -43,15 +43,25 @@ function process_asmfile() {
     return 0
   fi
 
-  # base command
-  cmd="PATH=${NODE_PATH}:\$PATH /usr/bin/env node ${CRYPTOPT_ROOT}/dist/CountCycle.js ${asm} 2>>${MINION_LOG}.${MINION_ID}.err"
+  # Support optional FAIR_COMPARISON environment variable
+  FAIR_CMP_FLAG=""
+  if [[ "${FAIR_COMPARISON}" == "true" ]] || [[ "${FAIR_COMPARISON}" == "1" ]]; then
+    FAIR_CMP_FLAG="--fair-comparison"
+    log "Fair comparison mode enabled"
+  fi
 
-  log "${cmd}"
-  #cycle check unused at the moment
-  read -r cycl_asm _cycl_check < <(eval "${cmd}")
+  log "Processing: ${asm} ${FAIR_CMP_FLAG}"
+
+  # Execute directly without eval - much safer!
+  # Properly quote all variables to prevent injection
+  if [[ -n "${FAIR_CMP_FLAG}" ]]; then
+    read -r cycl_asm cycl_check < <(PATH="${NODE_PATH}:$PATH" /usr/bin/env node "${CRYPTOPT_ROOT}/dist/CountCycle.js" "${asm}" "${FAIR_CMP_FLAG}" 2>>"${MINION_LOG}.${MINION_ID}.err")
+  else
+    read -r cycl_asm cycl_check < <(PATH="${NODE_PATH}:$PATH" /usr/bin/env node "${CRYPTOPT_ROOT}/dist/CountCycle.js" "${asm}" 2>>"${MINION_LOG}.${MINION_ID}.err")
+  fi
 
   [[ -z "${cycl_asm}" ]] && log "ERROR. CountCycle.js did not return a string." && return
-  line=$(printf "%s %s\n" "${cycl_asm}" "$(basename "${asm}")")
+  line=$(printf "%s %s %s\n" "${cycl_asm}" "${cycl_check}" "$(basename "${asm}")")
 
   infofile="$(dirname "${asm}")/${INFO_FILE_WIP}"
   log "$line >> ${infofile}"
@@ -80,7 +90,7 @@ function process_symbol_folder() {
     test -e "${file}" &&
       rm "${file}" &&
       log "Deleted ${file} because it did not make the cut of being in the ${NO_KEEP} best files."
-  done < <(tail -n "+${NO_KEEP}" <"${infofile_sort}" | awk '{print $2}')
+  done < <(tail -n "+${NO_KEEP}" <"${infofile_sort}" | awk '{print $3}')
 
   rm "${infofile_sort}" "${infofile_wip}"
 }

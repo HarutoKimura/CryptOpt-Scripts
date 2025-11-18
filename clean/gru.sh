@@ -19,6 +19,15 @@ symbol_only=${SYMBOL:=}
 # RES being a path to the results directory. defaults to <CRYPTOPT_ROOT>/results
 res=${RES:=$(realpath ./../../../results)}
 
+# FAIR_COMPARISON enables fair comparison mode (compile assembly to .so)
+# Export it so child processes (minions) can see it
+if [[ -n "${FAIR_COMPARISON}" ]]; then
+  export FAIR_COMPARISON
+  echo "Fair-comparison mode: ENABLED (assembly will be compiled to .so files)"
+else
+  echo "Fair-comparison mode: DISABLED (using AssemblyLine)"
+fi
+
 # should point to <CRYPTOPT_ROOT>/results
 set_frequency_script=$(realpath ../misc/set_frequency.sh)
 
