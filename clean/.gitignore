@@ -1,0 +1,13 @@
+# Minion worker files
+curve_minion_lock
+curveQ
+idling.*
+
+# Log files
+minion.log
+minion.log.*
+
+# Execution output files
+exec.out
+exec_speed.out
+*.out

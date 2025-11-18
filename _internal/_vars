@@ -11,8 +11,9 @@ export IDLING_PREFIX=idling
 ROOT_LOCAL=$(dirname "$0")
 
 set -e # if those paths are not working, fail
-NODE_PATH="$(realpath "${ROOT_LOCAL}/../../../bins/node/bin")"
-CRYPTOPT_ROOT="$(realpath "${ROOT_LOCAL}/../../../")"
+# CryptOpt is in a separate directory, not relative to CryptOpt-Scripts
+CRYPTOPT_ROOT="${HOME}/CryptOpt"
+NODE_PATH="${CRYPTOPT_ROOT}/bins/node/bin"
 set +e
 
 export CRYPTOPT_ROOT NODE_PATH
